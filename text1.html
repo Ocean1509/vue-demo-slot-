@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="bootstrap.css">
+	<style type="text/css">
+	#app{
+		margin-left:100px;
+	}
+	</style>
+	<script type="text/javascript" src="jquery-3.1.0.min.js"></script>
+	<script type="text/javascript" src="bootstrap.min.js"></script>
+</head>
+<body>
+	<div id="app">
+		<div>
+			<h3>message:</h3>
+			<p>{{message|json}}</p>
+		</div>
+		<child></child>
+		<p></p><p></p><p></p><p></p>
+		<div>
+			<input type="text" v-model="bmessage">
+			<button @click="broad">广播</button>
+		</div>
+		<bchild></bchild>
+	</div>
+	<template id="child-component">
+		<input type="text" v-model="msg">
+		<button @click="notify">发布</button>
+	</template>
+	<template id="child-broad">
+		<h3>broadCast message</h3>
+		<p>{{msg|json}}</p>
+	</template>	
+</body>
+<script src="vue.js"></script>
+<script type="text/javascript">
+	Vue.component("child",{
+		template:"#child-component",
+		data:function(){
+			return {
+				msg:''
+			}
+		},
+		methods:{
+			notify:function(){
+				if(this.msg.trim()){
+					this.$dispatch('child-msg',this.msg);
+					this.msg=''
+				}
+			}
+		}
+	})
+	Vue.component("bchild",{
+		template:"#child-broad",
+		data:function(){
+			return {
+				msg:[]
+			}
+		},
+		events:{
+			"broad-msg":function(m){
+				this.msg.push(m)
+			}
+		}
+
+	})
+	new Vue({
+		el:"#app",
+		data:{
+			message:[],
+			bmessage:''
+		},
+		events:{
+			'child-msg':function(m){
+				this.message.push(m)
+			}
+		},
+		methods:{
+			"broad":function(){
+				if(this.bmessage.trim()){
+					this.$broadcast("broad-msg",this.bmessage)	
+				}
+			}
+		}
+	})
+</script>
+</html>
