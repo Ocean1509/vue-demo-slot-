@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>vue-demo</title>
+	<link rel="stylesheet" href="bootstrap.css">
+	<link rel="stylesheet" href="text.css">
+</head>
+<body>
+	<div id="app">
+        	<div class="bt-group">
+        		<button class="btn btn-danger" @click="showtips('dialog-red',0)">按钮1</button>
+        		<button class="btn btn-success" @click="showtips('dialog-green',1)">按钮2</button>
+        		<button class="btn btn-info" @click="showtips('dialog-blue',2)">按钮3</button>
+        	</div>
+        	<my-dialog :show.sync="show" :class="dialogclass" :d-class.sync="dialogclass" :content="content">
+				<header slot="header">标题<span class="closex" @click="close">X</span></header>
+				<footer slot="footer">
+						<button class="btn" @click="close" :class="dialogclass">关闭</button>
+				</footer>
+        	</my-dialog>
+        </div>
+        <template id="dialog">
+        	<div class="alldialogs" :class="{ 'dialog-active': show }">
+        		<div class="dialogbg" @click="closebg"></div>
+        		<div class="dialogs">
+        			<slot name="header"></slot>
+        			<div slot="body" class="content">
+						<p :class="dClass">{{content}}</p>
+					</div>
+        			<slot name="footer"></slot>	
+        		</div>
+        	</div>
+      	</template>
+<script src="vue.js"></script>
+<script type="text/javascript">
+	Vue.component('my-dialog', {
+		template:'#dialog',
+		props:['show',"d-class","content"],
+		methods:{
+			closebg:function(){
+				this.show=true
+			}
+		}
+	})
+	new Vue({
+		el:"#app",
+		data:{
+			show:true,
+			dialogclass:"dialog-of",
+			message:[
+				"这是红色按钮",
+				"这是绿色按钮",
+				"这是蓝色按钮"
+			],
+			content:""
+		},
+		methods:{
+			"showtips":function(className,num){
+				this.show=false;
+				this.dialogclass=className,
+				this.content=this.message[num]
+			},
+			"close":function(){
+				this.show=true
+			}
+		}
+	})
+
+      	</script>
+</body>
+</html>
